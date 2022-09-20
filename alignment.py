@@ -12,7 +12,7 @@ import pandas as pd
 
 settings = getSettings()
 
-def align(fastafile, limit, sourcePath =  "fasta/treated/Sequence_With_Sub2_Occurence/", destinationPath = "alignment/"):
+def align(fastafile, limit, sourcePath, destinationPath):
     refSeq= SeqRecord(Seq(settings["refSeqSequence"]), id = settings["refSeqId"], name = "", description= "")
     recordList = [refSeq]
     for record in SeqIO.parse(sourcePath + fastafile, "fasta"):

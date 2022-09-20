@@ -22,7 +22,7 @@ def preTreatmentFasta(fastaFile, sourceFolder = settings["pretreatment"]["source
     
     EndMotifOnly = 0
     BeginningMotifOnly = 0
-    BothMotif= 0
+    BothMotif = 0
     
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
     print(file_number)
@@ -72,6 +72,11 @@ def preTreatmentFasta(fastaFile, sourceFolder = settings["pretreatment"]["source
     log+= str(BothMotif) + " sequences have both the Beginning and End motif. \n"
     log+= "The Beginning motif is %s and the End motif is %s." %(settings["pretreatment"]["pre_treatment_start_1"], settings["pretreatment"]["pre_treatment_end_1"])
     log+= "-------------\n"
+
+    if int(file_number[-1]) <=5:
+        destinationFolder += '/DirectedEvolutionData/'
+    elif int(file_number[-1]) > 5:
+        destinationFolder += '/MutagenesisData/'
 
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
     if not os.path.isfile(destinationFolder+"log.txt"): logFile = open(destinationFolder+ "log.txt", "w").close()

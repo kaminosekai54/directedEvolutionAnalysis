@@ -112,7 +112,7 @@ def preTreatmentFasta(fastaFile, sourceFolder = settings["pretreatment"]["source
 # This fonction plot as an histogram the sequence length distribution of a fasta file
 # @param
 # @seqLengthList, the list of sequence length to plot
-def plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "figures/sequence_length_distribution/"):
+def plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "figures/DirectedEvolutionData/sequence_length_distribution/"):
     print("Plotting sequence length distribution for ", fastaFile)
     
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
@@ -129,7 +129,7 @@ def plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "fig
     plt.close()
     print("Treatment finish for ", fastaFile)
 
-def plotSeqCountDistribution(seqCountList, fastaFile, destinationFolder = "figures/variant_count_distribution/"):
+def plotSeqCountDistribution(seqCountList, fastaFile, destinationFolder = "figures/DirectedEvolutionData/variant_count_distribution/"):
     seqCountList.sort()
     tmp2 = Counter(seqCountList)
     print("Plotting sequence count distribution for ", fastaFile)
@@ -148,7 +148,7 @@ def plotSeqCountDistribution(seqCountList, fastaFile, destinationFolder = "figur
     plt.close()
 
 
-def plotSubstrateCountDistribution(seqCountList, fastaFile, destinationFolder = "figures/product_count_distribution/"):
+def plotSubstrateCountDistribution(seqCountList, fastaFile, destinationFolder = "figures/DirectedEvolutionData/product_count_distribution/"):
     seqCountList.sort()
     tmp2 = Counter(seqCountList)
     
@@ -167,7 +167,7 @@ def plotSubstrateCountDistribution(seqCountList, fastaFile, destinationFolder = 
     plt.savefig(destinationFolder + fastaFile.replace(".fasta", "_SubstrateCountDistribution.png"))
     plt.close()
 
-def plotSeqProductCountDistribution(seqCountList, fastaFile, destinationFolder = "figures/variant_with_product_count_distribution/"):
+def plotSeqProductCountDistribution(seqCountList, fastaFile, destinationFolder = "figures/DirectedEvolutionData/variant_with_product_count_distribution/"):
     seqCountList.sort()
     tmp2 = Counter(seqCountList)
     
@@ -187,7 +187,7 @@ def plotSeqProductCountDistribution(seqCountList, fastaFile, destinationFolder =
     plt.close()
 
 
-def countSeqOccurences(fastaFile, startPatternToDetect = settings["seqOccuranceCounting"]["countMutation_seq_start"], endPatternToDetect = settings["seqOccuranceCounting"]["countMutation_seq_Substrate"], sourceFolder = "fasta/pre-treated/"):
+def countSeqOccurences(fastaFile, startPatternToDetect = settings["seqOccurenceCounting"]["countMutation_seq_start"], endPatternToDetect = settings["seqOccurenceCounting"]["countMutation_seq_Substrate"], sourceFolder = "fasta/pre-treated/DirectedEvolutionData/"):
     seqDict = {}
     productDict = {}
     seqProductDict= {}
@@ -212,7 +212,7 @@ def countSeqOccurences(fastaFile, startPatternToDetect = settings["seqOccuranceC
         if file_number > 5:
             if re.search(startPatternToDetect, seq) != None:
                 startIndex = re.search(startPatternToDetect, seq).start()
-                mainSeq = seq[startIndex : startIndex + settings["seqOccuranceCounting"]["countMutation_length"]]
+                mainSeq = seq[startIndex : startIndex + settings["seqOccurenceCounting"]["countMutation_length"]]
 
             if re.search(endPatternToDetect, seq) != None :
                 product = seq[seq.find(mainSeq) + len(mainSeq):]
@@ -296,18 +296,18 @@ def countSeqOccurences(fastaFile, startPatternToDetect = settings["seqOccuranceC
 
     return (newSeqDict, productDict, newProductDict, newSeqProductDict, productList, fastaFile)
 
-def writeSubstrateReads(SubstrateList, fastaFile, destinationFolder = "fasta/treated/product_By_Read/"):
+def writeSubstrateReads(SubstrateList, fastaFile, destinationFolder = "fasta/treated/DirectedEvolutionData/product_By_Read/"):
     if not os.path.isdir(destinationFolder): os.mkdir(destinationFolder)
     SeqIO.write(SubstrateList,destinationFolder+ fastaFile.replace(".fasta", "_SubstrateReadsList.fasta"), "fasta-2line")
 
-def writeSeqFasta(newMutationDict, SubstrateDict, SubstrateDict2, fastaFile, destinationFolder = "fasta/treated/Sequence_Occurence/", destinationFolder2 = "fasta/treated/Product_Occurence_By_Sequence/"):
+def writeSeqFasta(newMutationDict, SubstrateDict, fastaFile, destinationFolder = "fasta/treated/DirectedEvolutionData/Sequence_Occurence/", destinationFolder2= "fasta/treated/DirectedEvolutionData/Substrate_Occurence_by_Sequence"):
     seqId = 0
     recordList = []
     SubstrateList = []
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3][-1]
     
     for seq, nbFound in newMutationDict.items():
-        if nbFound >= settings["seqOccuranceCounting"]["minimumOccurence"]:
+        if nbFound >= settings["seqOccurenceCounting"]["minimumOccurence"]:
             seqName = "seq_" + str(seqId)+ "_"+ file_number + "_N="+ str(nbFound)
             recordList.append(SeqRecord(Seq(seq), id = seqName, name= "", description=""))
             SubstrateList.append(SeqRecord(Seq(seq), id = seqName, name= "", description=""))
@@ -326,12 +326,12 @@ def writeSeqFasta(newMutationDict, SubstrateDict, SubstrateDict2, fastaFile, des
 
 
 
-def writeSubstrateFasta(SubstrateDict,fastaFile, destinationFolder = "fasta/treated/product_Occurence/"):
+def writeSubstrateFasta(SubstrateDict,fastaFile, destinationFolder = "fasta/treated/DirectedEvolutionData/product_Occurence/"):
     seqId = 0
     recordList = []
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
     for seq, nbFound in SubstrateDict.items():
-        if nbFound >= settings["seqOccuranceCounting"]["minimumOccurence"] :
+        if nbFound >= settings["seqOccurenceCounting"]["minimumOccurence"] :
             seqName = "seq_Substrate" + str(seqId) + "_"+ file_number + "_N="+ str(nbFound)
             recordList.append(SeqRecord(Seq(seq), id = seqName, name= "", description=""))
 
@@ -340,12 +340,12 @@ def writeSubstrateFasta(SubstrateDict,fastaFile, destinationFolder = "fasta/trea
     if not os.path.isdir(destinationFolder) : os.mkdir(destinationFolder)
     SeqIO.write(recordList,destinationFolder + fastaFile.replace(".fasta", "_ProductOccurance.fasta"), "fasta-2line")
 
-def writeSeqProductFasta(productDict, fastaFile, destinationFolder = "fasta/treated/Sequence_With_Sub2_Occurence/"):
+def writeSeqProductFasta(productDict, fastaFile, destinationFolder = "fasta/treated/DirectedEvolutionData/Sequence_With_Sub2_Occurence/"):
     seqId = 0
     recordList = []
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
     for seq, nbFound in productDict.items():
-        if nbFound >= settings["seqOccuranceCounting"]["minimumOccurence"] :
+        if nbFound >= settings["seqOccurenceCounting"]["minimumOccurence"] :
             seqName = "seq_product" + str(seqId) + "_"+ file_number  + "_N="+ str(nbFound)
             recordList.append(SeqRecord(Seq(seq), id = seqName, name= "", description=""))
 
@@ -356,7 +356,7 @@ def writeSeqProductFasta(productDict, fastaFile, destinationFolder = "fasta/trea
 
 
 
-def countMutation(fastaFile, sourceFolder = "alignment/"):
+def countMutation(fastaFile, sourceFolder = "alignment/DirectedEvolutionData/"):
     # nbMut = lambda ref_seq, mut_seq: sum(ei != ej for ei, ej in zip(ref_seq, mut_seq))
     mutationPosCountDict= {}
     mutationCountList =[]
@@ -383,7 +383,7 @@ def countMutation(fastaFile, sourceFolder = "alignment/"):
 # This fonction plot as an histogram mutation count distribution of a fasta file
 # @param
 # @mutationCountList, the list of mutation count to plot
-def plotMutationDistribution(mutationCountList, fastaFile, destinationFolder = "figures/mutation_count_distribution/"):
+def plotMutationDistribution(mutationCountList, fastaFile, destinationFolder = "figures/DirectedEvolutionData/mutation_count_distribution/"):
     print("Plotting mutation count distribution for ", fastaFile)
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
     plt.figure(figsize=(15,8), facecolor='white')
