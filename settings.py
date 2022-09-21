@@ -10,6 +10,7 @@ settings = {
 "pre_treatment_end_1":"AACTTCAAATATCTTCGGAACTCA", # Sub2
 "pre_treatment_end_2":"TCCCTATCTCTCTAT", # exon_OT
 "length_threshold" : 100,
+"preTreatFile" : True,
     },
 
 "seqOccurenceCounting" : { # this part concerned only the counting and the writting of the output file for Directed Evolution data

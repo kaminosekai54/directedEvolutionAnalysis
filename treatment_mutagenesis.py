@@ -42,17 +42,16 @@ def countMutantSeqOccurence(fastaFile, startPatternToDetect = settings["seqOccur
         seq = str(record.seq)
         mainSeq=""
 
-        if file_number > 5:
-            if re.search(startPatternToDetect, seq) != None and re.search(endPatternToDetect, seq) != None :
-                startIndex = re.search(startPatternToDetect, seq).start() # The real start should be -9 from the start
-                endIndex = re.search(endPatternToDetect, seq).end()
-                mainSeq = seq[startIndex:endIndex]
-            MutantSeqList.append(SeqRecord(Seq(product), id = record.id, name = record.name, description=""))
+        if re.search(startPatternToDetect, seq) != None and re.search(endPatternToDetect, seq) != None :
+            startIndex = re.search(startPatternToDetect, seq).start() # The real start should be -9 from the start
+            endIndex = re.search(endPatternToDetect, seq).end()
+            mainSeq = seq[startIndex:endIndex+ len(endPatternToDetect)]
+        # MutantSeqList.append(SeqRecord(Seq(product), id = record.id, name = record.name, description=""))
         
-            if not mainSeq in MutantSeqDict.keys(): 
-                MutantSeqDict[mainSeq] = 1
-            else: 
-                MutantSeqDict[mainSeq] += 1
+        if not mainSeq in MutantSeqDict.keys(): 
+            MutantSeqDict[mainSeq] = 1
+        else: 
+            MutantSeqDict[mainSeq] += 1
 
     print("getting dict data finish")
 
@@ -68,7 +67,7 @@ def countMutantSeqOccurence(fastaFile, startPatternToDetect = settings["seqOccur
     return (sortedMutantSeqList, MutantSeqDict, sortedMutantSeqDict, fastaFile)
 
 
-def writeSeqMutagenesisFasta(SequenceDict, fastaFile, destinationFolder = "fasta/treated/Mutagenesis/"):
+def writeSeqMutagenesisFasta(SequenceDict, fastaFile, destinationFolder = "fasta/treated/MutagenesisData/"):
     seqId = 0
     recordList = []
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
@@ -84,7 +83,7 @@ def writeSeqMutagenesisFasta(SequenceDict, fastaFile, destinationFolder = "fasta
 
 
 
-def countMutation(fastaFile, sourceFolder = "alignment/MutagenesisData"):
+def countMutation(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/"):
     # nbMut = lambda ref_seq, mut_seq: sum(ei != ej for ei, ej in zip(ref_seq, mut_seq))
     
     mutationPosCountDict = {}
@@ -139,7 +138,6 @@ def plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "fig
 # This fonction plot as an histogram mutation count distribution of a fasta file
 # @param
 # @mutationCountList, the list of mutation count to plot
-
 def plotMutationDistribution(mutationCountList, fastaFile, destinationFolder = "figures/MutagenesisData/mutation_count_distribution/"):
     print("Plotting mutation count distribution for ", fastaFile)
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)

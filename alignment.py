@@ -1,4 +1,3 @@
-from asyncio import shield
 from settings import *
 import re, time, sys, os, platform, subprocess
 from Bio import SeqIO
@@ -12,7 +11,7 @@ import pandas as pd
 
 settings = getSettings()
 
-def align(fastafile, limit, sourcePath, destinationPath):
+def align(fastafile, limit, sourcePath = "fasta/treated/Sequence_With_Sub2_Occurence/", destinationPath="fasta/alignment/"):
     refSeq= SeqRecord(Seq(settings["refSeqSequence"]), id = settings["refSeqId"], name = "", description= "")
     recordList = [refSeq]
     for record in SeqIO.parse(sourcePath + fastafile, "fasta"):
@@ -39,7 +38,6 @@ def align(fastafile, limit, sourcePath, destinationPath):
     # child= subprocess.Popen(str(mafft_cline), stdout = subprocess.PIPE, stderr=subprocess.PIPE,          shell = (sys.platform!="win32"))
     child= subprocess.check_output(str(mafft_cline),text=True)
     # child.wait()
-    print(shield)
     
     if os.path.isfile(alignedFile):print("Alignment finished : the aligned file is " + alignedFile)
     else: print("It seems that an error occured, the alignement could not be done.")
