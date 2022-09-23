@@ -1,4 +1,5 @@
 from collections import Counter
+from statistics import mean
 from settings import *
 import re, time, sys, os, platform, subprocess
 from Bio import SeqIO
@@ -48,9 +49,9 @@ def countMutantSeqOccurence(fastaFile, startPatternToDetect = settings["seqOccur
             mainSeq = seq[startIndex:endIndex+ len(endPatternToDetect)]
         # MutantSeqList.append(SeqRecord(Seq(product), id = record.id, name = record.name, description=""))
         
-        if not mainSeq in MutantSeqDict.keys(): 
+        if not mainSeq in MutantSeqDict.keys() and mainSeq != "": 
             MutantSeqDict[mainSeq] = 1
-        else: 
+        elif mainSeq in MutantSeqDict.keys()  and mainSeq != "": 
             MutantSeqDict[mainSeq] += 1
 
     print("getting dict data finish")
@@ -85,30 +86,60 @@ def writeSeqMutagenesisFasta(SequenceDict, fastaFile, destinationFolder = "fasta
 
 def countMutation(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/"):
     # nbMut = lambda ref_seq, mut_seq: sum(ei != ej for ei, ej in zip(ref_seq, mut_seq))
-    
+    file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
+    print("counting mutation for : ", file_number )
     mutationPosCountDict = {}
     mutationCountList = []
-    mutationTypeCountDict = {"A":0,"T":0,"C":0,"G":0, "insertion":0, "deletion":0}
+    mutationTypeCountDict = {"insertion":0, "deletion":0}
     
     recordList = list(SeqIO.parse(sourceFolder + fastaFile, "fasta"))
     
     refSeq = str(recordList[0].seq).upper()
+    startGapePos = {}
     
-    for i in range(1, len(refSeq)+1): 
-        mutationPosCountDict[i] = 0
+    for i in range(1, len(refSeq)+1): mutationPosCountDict[i] = 0
 
     for record in recordList:
-        # nbMutation = nbMut(refSeq, record.seq)
+        if record.id == "SunY_sequence": continue
         seq = str(record.seq).upper()
+
+        if not record.id in startGapePos .keys() : startGapePos [record.id] =0
+        for i  in range(len(seq)): 
+            if seq[i] == "-" : startGapePos[record.id] +=1
+            else : break
+        nbOccurence = int(record.id[record.id.rfind("="):].replace("=",""))
+        # nbMutation = nbMut(refSeq, record.seq)
+        
         nbMutation = 0
         for i in mutationPosCountDict.keys():
-            if refSeq[i-1] != seq[i-1]:
-                nbMutation+=1
-                mutationPosCountDict[i] +=1
-                if refSeq[i-1] =="-": mutationTypeCountDict["insertion"]+=1
-                elif seq[i-1] =="-": mutationTypeCountDict["deletion"]+=1
-                else: mutationTypeCountDict[seq[i-1]] +=1
-        mutationCountList.append(nbMutation)
+            if refSeq[i-1] != seq[i-1] and refSeq[i-1] !="N" and  seq[i-1] !="N":
+                nbMutation+= 1
+                mutationPosCountDict[i] +=1 * nbOccurence
+                if refSeq[i-1] =="-": mutationTypeCountDict["insertion"]+=1 * nbOccurence
+                elif seq[i-1] == "-": mutationTypeCountDict["deletion"]+=1 * nbOccurence
+                else: 
+                    mutationType = refSeq[i-1] + "->"+ seq[i-1]
+                    if not mutationType in mutationTypeCountDict.keys(): mutationTypeCountDict[mutationType] =1*nbOccurence
+                    else: mutationTypeCountDict[mutationType] +=1*nbOccurence
+        mutationCountList.extend([nbMutation] *nbOccurence)
+
+    print("writting log file")
+    log = "mutation count for : " + fastaFile + "\n"
+    log += "the avrage number of mutation pear sequence  in the file is : " + str(round(sum(mutationCountList)/len(mutationCountList), 2)) + " mutation pear sequence with " + str(len(mutationCountList)) + "\n"
+    log += "the avrage number of mutation pear nucleotyde in the file is : " + str(sum(mutationCountList)/len(mutationCountList)/len(refSeq)) + "\n"
+    log += "which represent : " + str(sum(mutationCountList)/len(mutationCountList)/len(refSeq)*100) + " %" + "\n"
+    log+= "the type of position and their number are as followed : \n"
+    for k,v in mutationTypeCountDict.items(): log+= k + " : " + str(v) + " which represent " +  str(round(v / len(mutationCountList) *100)) + " % of the mutation \n"
+    log+= "please look at the graph for more infos on the count of mutation by position"
+    i = 0
+    for k,v in startGapePos.items():
+        print(k + " : " + str(v))
+        i+=1
+        if i>10: break
+    print(mean(startGapePos.values()))
+    if not os.path.isfile(sourceFolder + "log.txt"): logFile = open(sourceFolder + "log.txt", "w").close()
+    with open(sourceFolder +"log.txt", "a") as logFile:
+        logFile.write(log)
 
     return (mutationCountList, mutationPosCountDict, mutationTypeCountDict)
 

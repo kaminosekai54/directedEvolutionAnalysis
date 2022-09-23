@@ -49,6 +49,7 @@ def preTreatmentFasta(fastaFile, sourceFolder = settings["pretreatment"]["source
             seq = seq[:seq.rfind(settings["pretreatment"]["pre_treatment_end_2"]) + len(settings["pretreatment"]["pre_treatment_end_2"])]
         
         record.seq = Seq(seq)
+        # print(seq)
         
         if len(seq) > settings["pretreatment"]["length_threshold"] and int(file_number[-1]) <= 5:
             if haveBeginningMotif and not haveEndMotif: BeginningMotifOnly+=1
