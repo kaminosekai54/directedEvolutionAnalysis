@@ -22,6 +22,7 @@ def align(fastafile, limit, sourcePath = "fasta/treated/Sequence_With_Sub2_Occur
     if len(recordList) >= 200 : algo = "-super5"
     if not os.path.isdir(destinationPath): os.mkdir(destinationPath)
     alignedFile= destinationPath + fastafile.replace(".fasta", "_align.fasta")
+    print(alignedFile)
     tmpFile = destinationPath + fastafile
     SeqIO.write(recordList, tmpFile, "fasta")
     print("tmp file written")

@@ -11,9 +11,12 @@ def main():
     # Pre-treatment
     if settings["pretreatment"]["preTreatFile"]:
         if os.path.isfile("fasta/pre-treated/log.txt"): os.remove("fasta/pre-treated/log.txt")
+        if not os.path.isdir("figures/") : os.mkdir("figures/")
+        if not os.path.isdir("results_csv/") : os.mkdir("results_csv/")
+        if not os.path.isdir("results/") : os.mkdir("results/")
  
         print("starting pre-treatment")
-        fileList = [file for file in os.listdir("fasta/raw_fasta/") if not "trimmed" in file and "R1" in file]
+        fileList = [file for file in os.listdir("fasta/raw_fasta/") if not "trimmed" in file and "R1" in file and file.endswith(".fasta")]
         for file in fileList:
             seqLengthList = preTreatmentFasta(file)
         
@@ -37,10 +40,9 @@ def main():
 
     if not os.path.isdir("fasta/treated/MutagenesisData/") : os.mkdir("fasta/treated/MutagenesisData/")
 
-    # fileList = [file for file in os.listdir("fasta/pre-treated/MutagenesisData/") if "R1" in file]
+    # fileList = [file for file in os.listdir("fasta/pre-treated/MutagenesisData/") if "R1" in file and file.endswith(".fasta")]
     
     # for file in fileList:
-        # plotSeqLengthDistribution(seqLengthList, file)
         # sortedMutantSeqList, MutantSeqDict, sortedMutantSeqDict, fastaFile = countMutantSeqOccurence(file)
         # writeSeqMutagenesisFasta(sortedMutantSeqDict, file)
 
@@ -49,7 +51,7 @@ def main():
     # fileList = [file for file in os.listdir("fasta/treated/MutagenesisData/") if file.endswith(".fasta")]
     
     # for file in fileList: 
-        # alignedFile = align(file,1000000000, sourcePath =  "fasta/treated/MutagenesisData/", destinationPath = "fasta/alignment/MutagenesisData/")
+        # alignedFile = align(file, 10000, sourcePath =  "fasta/treated/MutagenesisData/", destinationPath = "fasta/alignment/MutagenesisData/")
 
     if not os.path.isdir("figures/MutagenesisData/") : os.mkdir("figures/MutagenesisData/")
     fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData") ]

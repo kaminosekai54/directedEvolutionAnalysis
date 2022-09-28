@@ -84,14 +84,15 @@ def writeSeqMutagenesisFasta(SequenceDict, fastaFile, destinationFolder = "fasta
 
 
 
-def countMutation(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/"):
+def countMutation(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/", destinationFolder = "results/countMutation"):
     # nbMut = lambda ref_seq, mut_seq: sum(ei != ej for ei, ej in zip(ref_seq, mut_seq))
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
     print("counting mutation for : ", file_number )
     mutationPosCountDict = {}
     mutationCountList = []
     mutationTypeCountDict = {"insertion":0, "deletion":0}
-    
+    print(sourceFolder)
+    print(fastaFile)
     recordList = list(SeqIO.parse(sourceFolder + fastaFile, "fasta"))
     
     refSeq = str(recordList[0].seq).upper()
