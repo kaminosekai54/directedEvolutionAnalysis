@@ -84,23 +84,22 @@ def writeSeqMutagenesisFasta(SequenceDict, fastaFile, destinationFolder = "fasta
 
 
 
-def countMutation(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/", destinationFolder = "results/countMutation"):
+def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/", destinationFolder = "results/MutagenesisData/countMutation/"):
+    if not os.path.isdir(destinationFolder) : os.mkdir(destinationFolder)
     # nbMut = lambda ref_seq, mut_seq: sum(ei != ej for ei, ej in zip(ref_seq, mut_seq))
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
     print("counting mutation for : ", file_number )
     mutationPosCountDict = {}
     mutationCountList = []
     mutationTypeCountDict = {"insertion":0, "deletion":0}
-    print(sourceFolder)
-    print(fastaFile)
     recordList = list(SeqIO.parse(sourceFolder + fastaFile, "fasta"))
     
     refSeq = str(recordList[0].seq).upper()
     startGapePos = {}
     
     for i in range(1, len(refSeq)+1): mutationPosCountDict[i] = 0
-
-    for record in recordList:
+    print("should print something")
+    for record in SeqIO.parse(sourceFolder + fastaFile, "fasta"):
         if record.id == "SunY_sequence": continue
         seq = str(record.seq).upper()
 
@@ -130,7 +129,7 @@ def countMutation(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/", 
     log += "the avrage number of mutation pear nucleotyde in the file is : " + str(sum(mutationCountList)/len(mutationCountList)/len(refSeq)) + "\n"
     log += "which represent : " + str(sum(mutationCountList)/len(mutationCountList)/len(refSeq)*100) + " %" + "\n"
     log+= "the type of position and their number are as followed : \n"
-    for k,v in mutationTypeCountDict.items(): log+= k + " : " + str(v) + " which represent " +  str(round(v / len(mutationCountList) *100)) + " % of the mutation \n"
+    for k,v in mutationTypeCountDict.items(): log+= k + " : " + str(v) + " which represent " +  str(round(v / len(mutationCountList) *100, 2)) + " % of the mutation \n"
     log+= "please look at the graph for more infos on the count of mutation by position"
     i = 0
     for k,v in startGapePos.items():
@@ -138,8 +137,8 @@ def countMutation(fastaFile, sourceFolder = "fasta/alignment/MutagenesisData/", 
         i+=1
         if i>10: break
     print(mean(startGapePos.values()))
-    if not os.path.isfile(sourceFolder + "log.txt"): logFile = open(sourceFolder + "log.txt", "w").close()
-    with open(sourceFolder +"log.txt", "a") as logFile:
+    if not os.path.isfile(sourceFolder + "log.txt"): logFile = open(destinationFolder+ "log.txt", "w").close()
+    with open(destinationFolder+"log.txt", "a") as logFile:
         logFile.write(log)
 
     return (mutationCountList, mutationPosCountDict, mutationTypeCountDict)

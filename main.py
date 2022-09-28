@@ -58,10 +58,12 @@ def main():
     for file in fileList:
         if file.endswith("log.txt") : os.remove("fasta/alignment/MutagenesisData/"+ file)
 
-    fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData") ]
+    # mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData("L447T09.R1_pre-treated_MutagenesisSequences_align.fasta", sourceFolder="fasta/alignment/MutagenesisData/")  
+    fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData/")  if file.endswith(".fasta")]
     
-    for file in fileList: 
-        mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutation(file)
+    for file in fileList:
+        # mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData(file, sourceFolder="fasta/alignment/MutagenesisData/")
+        mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData(file)
         plotMutationDistribution(mutationCountList, file)
 
 if __name__ == '__main__':
