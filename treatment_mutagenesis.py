@@ -1,5 +1,7 @@
 from collections import Counter
+from operator import length_hint
 from statistics import mean
+from tarfile import LENGTH_LINK
 from settings import *
 import re, time, sys, os, platform, subprocess
 from Bio import SeqIO
@@ -91,7 +93,21 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
     print("counting mutation for : ", file_number )
     mutationPosCountDict = {}
     mutationCountList = []
-    mutationTypeCountDict = {"insertion":0, "deletion":0}
+    mutationTypeCountDict = {
+        "insertion":0, 
+        "deletion":0, "A->C":0, 
+"A->G":0, 
+"A->T":0,
+"C->A":0,
+"C->G":0,
+"C->T":0,
+"G->A":0,
+"G->C":0,
+"G->T":0,
+"T->A":0, 
+"T->C":0, 
+"T->G":0, 
+}
     recordList = list(SeqIO.parse(sourceFolder + fastaFile, "fasta"))
     
     refSeq = str(recordList[0].seq).upper()
@@ -108,7 +124,6 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
             if seq[i] == "-" : startGapePos[record.id] +=1
             else : break
         nbOccurence = int(record.id[record.id.rfind("="):].replace("=",""))
-        # nbMutation = nbMut(refSeq, record.seq)
         
         nbMutation = 0
         for i in mutationPosCountDict.keys():
@@ -129,7 +144,7 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
     log += "the avrage number of mutation pear nucleotyde in the file is : " + str(sum(mutationCountList)/len(mutationCountList)/len(refSeq)) + "\n"
     log += "which represent : " + str(sum(mutationCountList)/len(mutationCountList)/len(refSeq)*100) + " %" + "\n"
     log+= "the type of position and their number are as followed : \n"
-    for k,v in mutationTypeCountDict.items(): log+= k + " : " + str(v) + " which represent " +  str(round(v / len(mutationCountList) *100, 2)) + " % of the mutation \n"
+    for k,v in mutationTypeCountDict.items(): log+= k + " : " + str(v) + " which represent " +  str(round(v / sum(mutationTypeCountDict.values()) *100, 2)) + " % of the mutation \n"
     log+= "please look at the graph for more infos on the count of mutation by position"
     i = 0
     for k,v in startGapePos.items():
@@ -137,8 +152,7 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
         i+=1
         if i>10: break
     print(mean(startGapePos.values()))
-    if not os.path.isfile(sourceFolder + "log.txt"): logFile = open(destinationFolder+ "log.txt", "w").close()
-    with open(destinationFolder+"log.txt", "a") as logFile:
+    with open(destinationFolder+ file_number + "count_mutation_log.txt", "w") as logFile:
         logFile.write(log)
 
     return (mutationCountList, mutationPosCountDict, mutationTypeCountDict)
@@ -170,6 +184,7 @@ def plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "fig
 # @param
 # @mutationCountList, the list of mutation count to plot
 def plotMutationDistribution(mutationCountList, fastaFile, destinationFolder = "figures/MutagenesisData/mutation_count_distribution/"):
+    if ".aln" in fastaFile: fastaFile= fastaFile.replace(".aln", ".fasta")
     print("Plotting mutation count distribution for ", fastaFile)
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
     plt.figure(figsize=(15,8), facecolor='white')
@@ -182,3 +197,16 @@ def plotMutationDistribution(mutationCountList, fastaFile, destinationFolder = "
     # plt.show()
     plt.savefig(destinationFolder + "mutation_count_distribution_" + fastaFile.replace(".fasta", ".png"))
     plt.close()
+
+
+def checkSeqLength(fastaFile):
+
+    lengthList = []
+    for record in SeqIO.parse(fastaFile, "fasta-2line"): lengthList.append(len(record.seq))
+
+    print(mean(lengthList))
+    print(min(lengthList))
+    print(max(lengthList))
+
+
+# checkSeqLength("fasta/treated/MutagenesisData/L447T06.R1_pre-treated_MutagenesisSequences.fasta")

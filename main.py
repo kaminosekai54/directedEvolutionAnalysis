@@ -46,7 +46,7 @@ def main():
         # sortedMutantSeqList, MutantSeqDict, sortedMutantSeqDict, fastaFile = countMutantSeqOccurence(file)
         # writeSeqMutagenesisFasta(sortedMutantSeqDict, file)
 
-
+    # alignedFile = align("L447T06.R1_pre-treated_MutagenesisSequences.fasta", 10000000, sourcePath =  "fasta/treated/MutagenesisData/", destinationPath = "fasta/alignment/MutagenesisData/")
     if not os.path.isdir("fasta/alignment/") : os.mkdir("fasta/alignment/")
     # fileList = [file for file in os.listdir("fasta/treated/MutagenesisData/") if file.endswith(".fasta")]
     
@@ -59,7 +59,7 @@ def main():
         if file.endswith("log.txt") : os.remove("fasta/alignment/MutagenesisData/"+ file)
 
     # mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData("L447T09.R1_pre-treated_MutagenesisSequences_align.fasta", sourceFolder="fasta/alignment/MutagenesisData/")  
-    fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData/")  if file.endswith(".fasta")]
+    fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData/")  if file.endswith(".fasta") or file.endswith(".aln")]
     
     for file in fileList:
         # mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData(file, sourceFolder="fasta/alignment/MutagenesisData/")
