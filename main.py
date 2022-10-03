@@ -63,8 +63,10 @@ def main():
     
     for file in fileList:
         # mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData(file, sourceFolder="fasta/alignment/MutagenesisData/")
-        mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData(file)
-        plotMutationDistribution(mutationCountList, file)
+        mutationCountList, mutationPosCountDict, mutationTypeCountDict, mutationTypeByPosDict = countMutationForMutagenesisData(file)
+        plotMutationDistributionForMutagenesisData(mutationCountList, file)
+        plotMutationPosDistributionForMutagenesisData(mutationPosCountDict, file)
+        plotMutationTypeByPosDistributionForMutagenesisData(mutationTypeByPosDict, file)
 
 if __name__ == '__main__':
     main()

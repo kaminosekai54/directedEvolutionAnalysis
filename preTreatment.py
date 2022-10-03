@@ -18,7 +18,7 @@ def preTreatmentFasta(fastaFile, sourceFolder = settings["pretreatment"]["source
     elif int(file_number[-1]) > 5:
         destinationFolder += '/MutagenesisData/'
         seqLengthList=preTreatMutagenesisData(fastaFile, destinationFolder=destinationFolder)
-        if settings["pretreatment"]["plotSeqLengthDistribution"] : plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "figures/MutagenesisData/sequence_length_distribution/")
+        if settings["pretreatment"]["plotSeqLengthDistribution"] : plotSeqLengthDistributionForMutagenesisData(seqLengthList, fastaFile, destinationFolder = "figures/MutagenesisData/sequence_length_distribution/")
 
 
 # function preTreatDirectedEvolutionData

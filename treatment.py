@@ -6,6 +6,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import AlignIO
 from matplotlib import pyplot as plt
+from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
 

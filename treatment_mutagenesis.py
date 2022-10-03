@@ -1,7 +1,5 @@
 from collections import Counter
-from operator import length_hint
 from statistics import mean
-from tarfile import LENGTH_LINK
 from settings import *
 import re, time, sys, os, platform, subprocess
 from Bio import SeqIO
@@ -9,6 +7,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import AlignIO
 from matplotlib import pyplot as plt
+from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
 
@@ -93,7 +92,7 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
     print("counting mutation for : ", file_number )
     mutationPosCountDict = {}
     mutationCountList = []
-    mutationTypeCountDict = {
+    mutationTypeCountDict= {
         "insertion":0, 
         "deletion":0, "A->C":0, 
 "A->G":0, 
@@ -112,9 +111,10 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
     
     refSeq = str(recordList[0].seq).upper()
     startGapePos = {}
-    
+    mutationTypeByPosDict = {}
     for i in range(1, len(refSeq)+1): mutationPosCountDict[i] = 0
-    print("should print something")
+    for i in range(1, len(refSeq)+1): 
+        mutationTypeByPosDict[i] = {"insertion":0, "deletion":0,"A->C":0, "A->G":0, "A->T":0,"C->A":0,"C->G":0,"C->T":0,"G->A":0,"G->C":0,"G->T":0,"T->A":0, "T->C":0, "T->G":0, }
     for record in SeqIO.parse(sourceFolder + fastaFile, "fasta"):
         if record.id == "SunY_sequence": continue
         seq = str(record.seq).upper()
@@ -130,12 +130,20 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
             if refSeq[i-1] != seq[i-1] and refSeq[i-1] !="N" and  seq[i-1] !="N":
                 nbMutation+= 1
                 mutationPosCountDict[i] +=1 * nbOccurence
-                if refSeq[i-1] =="-": mutationTypeCountDict["insertion"]+=1 * nbOccurence
-                elif seq[i-1] == "-": mutationTypeCountDict["deletion"]+=1 * nbOccurence
+                if refSeq[i-1] =="-": 
+                    mutationTypeCountDict["insertion"]+=1 * nbOccurence
+                    mutationTypeByPosDict[i]["insertion"]+=1 * nbOccurence
+                elif seq[i-1] == "-": 
+                    mutationTypeCountDict["deletion"]+=1 * nbOccurence
+                    mutationTypeByPosDict[i]["deletion"]+=1 * nbOccurence
                 else: 
                     mutationType = refSeq[i-1] + "->"+ seq[i-1]
-                    if not mutationType in mutationTypeCountDict.keys(): mutationTypeCountDict[mutationType] =1*nbOccurence
-                    else: mutationTypeCountDict[mutationType] +=1*nbOccurence
+                    if not mutationType in mutationTypeCountDict.keys(): 
+                        mutationTypeCountDict[mutationType] =1*nbOccurence
+                        mutationTypeByPosDict[i][mutationType] =1*nbOccurence
+                    else: 
+                        mutationTypeCountDict[mutationType] +=1*nbOccurence
+                        mutationTypeByPosDict[i][mutationType] +=1*nbOccurence
         mutationCountList.extend([nbMutation] *nbOccurence)
 
     print("writting log file")
@@ -146,23 +154,23 @@ def countMutationForMutagenesisData(fastaFile, sourceFolder = "fasta/alignment/M
     log+= "the type of position and their number are as followed : \n"
     for k,v in mutationTypeCountDict.items(): log+= k + " : " + str(v) + " which represent " +  str(round(v / sum(mutationTypeCountDict.values()) *100, 2)) + " % of the mutation \n"
     log+= "please look at the graph for more infos on the count of mutation by position"
-    i = 0
-    for k,v in startGapePos.items():
-        print(k + " : " + str(v))
-        i+=1
-        if i>10: break
-    print(mean(startGapePos.values()))
+    # i = 0
+    # for k,v in startGapePos.items():
+        # print(k + " : " + str(v))
+        # i+=1
+        # if i>10: break
+    # print(mean(startGapePos.values()))
     with open(destinationFolder+ file_number + "count_mutation_log.txt", "w") as logFile:
         logFile.write(log)
 
-    return (mutationCountList, mutationPosCountDict, mutationTypeCountDict)
+    return (mutationCountList, mutationPosCountDict, mutationTypeCountDict, mutationTypeByPosDict)
 
 
 # function plotSeqLengthDistribution
 # This fonction plot as an histogram the sequence length distribution of a fasta file
 # @param
 # @seqLengthList, the list of sequence length to plot
-def plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "figures/MutagenesisData/sequence_length_distribution/"):
+def plotSeqLengthDistributionForMutagenesisData(seqLengthList, fastaFile, destinationFolder = "figures/MutagenesisData/sequence_length_distribution/"):
     print("Plotting sequence length distribution for ", fastaFile)
     
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
@@ -183,21 +191,98 @@ def plotSeqLengthDistribution(seqLengthList, fastaFile, destinationFolder = "fig
 # This fonction plot as an histogram mutation count distribution of a fasta file
 # @param
 # @mutationCountList, the list of mutation count to plot
-def plotMutationDistribution(mutationCountList, fastaFile, destinationFolder = "figures/MutagenesisData/mutation_count_distribution/"):
+def plotMutationDistributionForMutagenesisData(mutationCountList, fastaFile, destinationFolder = "figures/MutagenesisData/mutation_count_distribution/"):
     if ".aln" in fastaFile: fastaFile= fastaFile.replace(".aln", ".fasta")
     print("Plotting mutation count distribution for ", fastaFile)
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
+    mutationCountList.sort()
+    tmp = Counter(mutationCountList)
+    mutationCounter = {}
+    # print(tmp)
+    for k,v in tmp.items() : mutationCounter[str(k)] = round(v/sum(tmp.values())*100, 2)
     plt.figure(figsize=(15,8), facecolor='white')
     plt.title("Mutation count distribution")
     plt.suptitle("for " + fastaFile.replace(".", " ").replace("fasta", ""))
-    plt.xlim([min(mutationCountList)-1, max(mutationCountList)+1])
+    # plt.xlim([min(tmp.keys())-1, max(tmp.keys())+1])
+    plt.xlim([0, 15])
     plt.xlabel('number of mutation')
-    plt.ylabel('Number of mutation')
-    plt.hist(mutationCountList, alpha=0.5, facecolor='purple')
+    plt.ylabel('percentage of sequence with this number of mutation')
+    # plt.hist(mutationCountList, alpha=0.5, facecolor='purple')
+    plt.bar(mutationCounter.keys(), mutationCounter.values())
     # plt.show()
     plt.savefig(destinationFolder + "mutation_count_distribution_" + fastaFile.replace(".fasta", ".png"))
     plt.close()
 
+
+
+def plotMutationPosDistributionForMutagenesisData(mutationPosCountDict, fastaFile, destinationFolder = "figures/MutagenesisData/mutation_count_distribution_by_position/"):
+    if ".aln" in fastaFile: fastaFile= fastaFile.replace(".aln", ".fasta")
+    print("Plotting mutation pos count distribution for ", fastaFile)
+    if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
+    tmp={}
+    for k, v in mutationPosCountDict.items(): tmp[str(k)] = round(v/sum(mutationPosCountDict.values())*100, 2)
+    # for k, v in tmp.items(): print(k, str(v))
+    plt.figure(figsize=(15,8), facecolor='white')
+    plt.title("Mutation count distribution by position")
+    plt.suptitle("for " + fastaFile.replace(".", " ").replace("fasta", ""))
+    plt.xlim([min(mutationPosCountDict.keys())-1, 170])
+    plt.xticks(np.arange(-1, 171, step=5))
+    plt.xlabel('Position dans la sequence de sunwise')
+    plt.ylabel('Percentage of mutation in the file')
+    plt.bar(tmp.keys(), tmp.values())
+    # plt.show()
+    plt.savefig(destinationFolder + "mutation_count_by_position_distribution_" + fastaFile.replace(".fasta", ".png"))
+    plt.close()
+
+
+def plotMutationTypeByPosDistributionForMutagenesisData(mutationTypeByPosDict, fastaFile, destinationFolder = "figures/MutagenesisData/mutation_count_distribution_type_by_position/"):
+    if ".aln" in fastaFile: fastaFile= fastaFile.replace(".aln", ".fasta")
+    print("Plotting mutation pos count distribution for ", fastaFile)
+    if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
+    tmp={}
+    typePosDict = {}
+    for k, v in mutationTypeByPosDict.items():
+        sigmaV = sum(v.values())
+        for k2,v2 in v.items():
+            if not k2 in typePosDict.keys(): 
+                if sigmaV >  0 :  typePosDict[k2] = [round(v2/sum(v.values())*100, 2)]
+                else : typePosDict[k2]  = [0]
+            else: 
+                if sigmaV > 0 : typePosDict[k2].append(round(v2/sum(v.values())*100, 2))
+                else: typePosDict[k2].append(0)
+            # tmp[str(k)] = {k2: round(v2/sum(v.values())*100, 2)}
+    # for k, v in tmp.items(): print(k, str(v))
+    mutationTypeColorDict= {
+        "insertion": "black", 
+        "deletion":"grey",
+        "A->C":"#e62e00", 
+"A->G":"#ff5c33", 
+"A->T":"#ff8566",
+"C->A":"#3366ff",
+"C->G":"#809fff",
+"C->T":"#b3c6ff",
+"G->A":"#339966",
+"G->C":"#66cc99",
+"G->T":"#9fdfbf",
+"T->A":"#993366", 
+"T->C":"#d279a6", 
+"T->G":"#e6b3cc", 
+}
+    # plt.figure(figsize=(15,8), facecolor='white')
+    fig, ax = plt.subplots()
+    ax.set_title("Mutation count distribution by position for each type of mutation")
+    # ax.set("for " + fastaFile.replace(".", " ").replace("fasta", ""))
+    ax.set_xlim([0, 170])
+    ax.set_xticks(np.arange(-1, 171, step=5))
+    ax.set_xlabel('Position dans la sequence de sunY')
+    ax.set_ylabel('Percentage of mutation in the file')
+    patches = [Patch(color=v, label=k) for k, v in mutationTypeColorDict.items()]
+    ax.legend(title='Type of mutation', labels=mutationTypeColorDict.keys(), handles=patches, bbox_to_anchor=(1.04, 0.5), loc='center left', borderaxespad=0, fontsize=15, frameon=False)
+    for k, v in typePosDict.items():
+        ax.bar(mutationTypeByPosDict.keys(), v, color = mutationTypeColorDict[k])
+    # plt.show()
+    fig.savefig(destinationFolder + "mutation_type_by_position_distribution_" + fastaFile.replace(".fasta", ".png"),bbox_inches='tight')
+    plt.close()
 
 def checkSeqLength(fastaFile):
 
