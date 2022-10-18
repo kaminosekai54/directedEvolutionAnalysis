@@ -48,25 +48,24 @@ def main():
 
     # alignedFile = align("L447T06.R1_pre-treated_MutagenesisSequences.fasta", 10000000, sourcePath =  "fasta/treated/MutagenesisData/", destinationPath = "fasta/alignment/MutagenesisData/")
     if not os.path.isdir("fasta/alignment/") : os.mkdir("fasta/alignment/")
-    # fileList = [file for file in os.listdir("fasta/treated/MutagenesisData/") if file.endswith(".fasta")]
-    
+    fileList = [file for file in os.listdir("fasta/treated/MutagenesisData/") if file.endswith(".fasta")]
+    checkMutanPresence(fileList , "fasta/sunyMutan.fasta")
     # for file in fileList: 
         # alignedFile = align(file, 10000, sourcePath =  "fasta/treated/MutagenesisData/", destinationPath = "fasta/alignment/MutagenesisData/")
 
     if not os.path.isdir("figures/MutagenesisData/") : os.mkdir("figures/MutagenesisData/")
-    fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData") ]
-    for file in fileList:
-        if file.endswith("log.txt") : os.remove("fasta/alignment/MutagenesisData/"+ file)
+    # fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData") ]
+    # for file in fileList:
+        # if file.endswith("log.txt") : os.remove("fasta/alignment/MutagenesisData/"+ file)
 
-    # mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData("L447T09.R1_pre-treated_MutagenesisSequences_align.fasta", sourceFolder="fasta/alignment/MutagenesisData/")  
-    fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData/")  if file.endswith(".fasta") or file.endswith(".aln")]
+    # fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData/")  if file.endswith(".fasta") or file.endswith(".aln")]
     
-    for file in fileList:
+    # for file in fileList:
         # mutationCountList, mutationPosCountDict, mutationTypeCountDict= countMutationForMutagenesisData(file, sourceFolder="fasta/alignment/MutagenesisData/")
-        mutationCountList, mutationPosCountDict, mutationTypeCountDict, mutationTypeByPosDict = countMutationForMutagenesisData(file)
-        plotMutationDistributionForMutagenesisData(mutationCountList, file)
-        plotMutationPosDistributionForMutagenesisData(mutationPosCountDict, file)
-        plotMutationTypeByPosDistributionForMutagenesisData(mutationTypeByPosDict, file)
+        # mutationCountList, mutationPosCountDict, mutationTypeCountDict, mutationTypeByPosDict = countMutationForMutagenesisData(file)
+        # plotMutationDistributionForMutagenesisData(mutationCountList, file)
+        # plotMutationPosDistributionForMutagenesisData(mutationPosCountDict, file)
+        # plotMutationTypeByPosDistributionForMutagenesisData(mutationTypeByPosDict, file)
 
 if __name__ == '__main__':
     main()

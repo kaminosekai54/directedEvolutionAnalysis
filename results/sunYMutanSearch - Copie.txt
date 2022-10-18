@@ -1,0 +1,5 @@
+Suny mutan count 
+549 sunY mutan have been found in the file L447T06.R1_pre-treated_MutagenesisSequences.fasta
+906 sunY mutan have been found in the file L447T07.R1_pre-treated_MutagenesisSequences.fasta
+744 sunY mutan have been found in the file L447T08.R1_pre-treated_MutagenesisSequences.fasta
+604 sunY mutan have been found in the file L447T09.R1_pre-treated_MutagenesisSequences.fasta

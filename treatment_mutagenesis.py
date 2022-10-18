@@ -1,4 +1,5 @@
 from collections import Counter
+from fileinput import filelineno
 from statistics import mean
 from settings import *
 import re, time, sys, os, platform, subprocess
@@ -49,6 +50,8 @@ def countMutantSeqOccurence(fastaFile, startPatternToDetect = settings["seqOccur
             endIndex = re.search(endPatternToDetect, seq).end()
             mainSeq = seq[startIndex:endIndex+ len(endPatternToDetect)]
         # MutantSeqList.append(SeqRecord(Seq(product), id = record.id, name = record.name, description=""))
+
+        if len(mainSeq) < 140 : continue
         
         if not mainSeq in MutantSeqDict.keys() and mainSeq != "": 
             MutantSeqDict[mainSeq] = 1
@@ -293,5 +296,47 @@ def checkSeqLength(fastaFile):
     print(min(lengthList))
     print(max(lengthList))
 
+def generateSunyMutant():
+    base= ["A", "T", "C", "G"]
+    baseSeq = settings["refSeqSequence"]
+    mutantList = []
+    for i in range(len(baseSeq)):
+        for nuc in base:
+            if nuc != baseSeq[i]:
+                seqName = "sunY_mutant_pos_" + str(i+1) + "_" + baseSeq[i] + "_to_" + nuc
+                mutedSeq = baseSeq[0:i] + nuc + baseSeq[i+1:]
+                mutantList.append(SeqRecord(Seq(mutedSeq), id= seqName, name="", description=""))
+
+    SeqIO.write(mutantList, "fasta/sunyMutan.fasta", "fasta-2line")
+
+def checkMutanPresence(fileList, mutanFasta, fileSourcePath = "fasta/treated/MutagenesisData/"):
+    mutanList = {}
+    for record in SeqIO.parse(mutanFasta, "fasta-2line"):
+        mutanList [record.id] = str(record.seq)
+
+    fileInfos = {}
+    for file in fileList:
+        print("starting check for ", file)
+        # fileInfos[file] = {"nbMutanFound":0}
+        fileInfos[file] = {"nbMutanFound":0, "nbSeqInFile":0}
+        listSeq = []
+        for record in SeqIO.parse(fileSourcePath  + file, "fasta-2line"):
+            listSeq.append(str(record.seq))
+
+        fileInfos[file]["nbSeqInFile"] = len(listSeq)
+        
+        for seq in mutanList.values():
+            fileInfos[file]["nbMutanFound"] += sum(seq in s for s in listSeq) 
+                    # fileInfos[file]["nbMutanFound"]+=1
+                
+
+            log = "Suny mutan count \n"
+            for fileName, d in fileInfos.items():
+                log += str(d["nbMutanFound"]) + " sunY mutan have been found in the file " + fileName + " for a total of " + str(d["nbSeqInFile"]) + " sequence \n"
+                log += "it represent " + str(d["nbMutanFound"]/ d["nbSeqInFile"] *100) + " % of the sequence \n"
+
+            with open("results/sunYMutanSearch.txt", "w") as logFile: logFile.write(log)
 
 # checkSeqLength("fasta/treated/MutagenesisData/L447T06.R1_pre-treated_MutagenesisSequences.fasta")
+
+generateSunyMutant()
