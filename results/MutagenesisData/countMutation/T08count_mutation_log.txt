@@ -1,20 +1,20 @@
-mutation count for : L447T08.R1_pre-treated_MutagenesisSequences.fasta
-the avrage number of mutation pear sequence  in the file is : 3.82 mutation pear sequence with 1120586
-the avrage number of mutation pear nucleotyde in the file is : 0.012921572380975764
-which represent : 1.2921572380975763 %
+mutation count for : L447T08.R1_pre-treated_MutagenesisSequences_aligned.fasta
+the avrage number of mutation pear sequence  in the file is : 2.68 mutation pear sequence with 1107466
+the avrage number of mutation pear nucleotyde in the file is : 0.009050192426138054
+which represent : 0.9050192426138054 %
 the type of position and their number are as followed : 
 insertion : 0 which represent 0.0 % of the mutation 
-deletion : 1380047 which represent 32.2 % of the mutation 
-A->C : 173611 which represent 4.05 % of the mutation 
-A->G : 656157 which represent 15.31 % of the mutation 
-A->T : 630258 which represent 14.71 % of the mutation 
-C->A : 83204 which represent 1.94 % of the mutation 
-C->G : 22440 which represent 0.52 % of the mutation 
-C->T : 146196 which represent 3.41 % of the mutation 
-G->A : 203551 which represent 4.75 % of the mutation 
-G->C : 46701 which represent 1.09 % of the mutation 
-G->T : 82359 which represent 1.92 % of the mutation 
-T->A : 386872 which represent 9.03 % of the mutation 
-T->C : 376067 which represent 8.77 % of the mutation 
-T->G : 98538 which represent 2.3 % of the mutation 
+deletion : 150352 which represent 5.07 % of the mutation 
+A->C : 161459 which represent 5.44 % of the mutation 
+A->G : 644791 which represent 21.73 % of the mutation 
+A->T : 627672 which represent 21.16 % of the mutation 
+C->A : 79756 which represent 2.69 % of the mutation 
+C->G : 17432 which represent 0.59 % of the mutation 
+C->T : 144632 which represent 4.88 % of the mutation 
+G->A : 184756 which represent 6.23 % of the mutation 
+G->C : 45111 which represent 1.52 % of the mutation 
+G->T : 80164 which represent 2.7 % of the mutation 
+T->A : 384352 which represent 12.96 % of the mutation 
+T->C : 365097 which represent 12.31 % of the mutation 
+T->G : 81169 which represent 2.74 % of the mutation 
 please look at the graph for more infos on the count of mutation by position
