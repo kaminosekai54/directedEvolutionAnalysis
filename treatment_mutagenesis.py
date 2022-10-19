@@ -324,16 +324,16 @@ def checkMutanPresence(fileList, mutanFasta, fileSourcePath = "fasta/treated/Mut
             listSeq.append(str(record.seq))
 
         fileInfos[file]["nbSeqInFile"] = len(listSeq)
-        
+        # nbMutantFound = 0
         for seq in mutanList.values():
-            fileInfos[file]["nbMutanFound"] += sum(seq in s for s in listSeq) 
-                    # fileInfos[file]["nbMutanFound"]+=1
+            if seq in listSeq : fileInfos[file]["nbMutanFound"]+=1
+            # fileInfos[file]["nbMutanFound"] += sum(seq in s for s in listSeq) 
                 
 
             log = "Suny mutan count \n"
             for fileName, d in fileInfos.items():
-                log += str(d["nbMutanFound"]) + " sunY mutan have been found in the file " + fileName + " for a total of " + str(d["nbSeqInFile"]) + " sequence \n"
-                log += "it represent " + str(d["nbMutanFound"]/ d["nbSeqInFile"] *100) + " % of the sequence \n"
+                log += str(d["nbMutanFound"]) + " sunY mutan have been found in the file " + fileName + "\n"
+                log += "it represent " + str(round(d["nbMutanFound"]/ len(mutanList) *100, 2)) + " % of the mutan \n"
 
             with open("results/sunYMutanSearch.txt", "w") as logFile: logFile.write(log)
 

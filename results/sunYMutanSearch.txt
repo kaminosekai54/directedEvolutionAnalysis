@@ -1,9 +1,9 @@
 Suny mutan count 
-549 sunY mutan have been found in the file L447T06.R1_pre-treated_MutagenesisSequences.fasta for a total of 207490 sequence 
-it represent 0.26459106462962073 % of the sequence 
-906 sunY mutan have been found in the file L447T07.R1_pre-treated_MutagenesisSequences.fasta for a total of 692568 sequence 
-it represent 0.13081747929445195 % of the sequence 
-744 sunY mutan have been found in the file L447T08.R1_pre-treated_MutagenesisSequences.fasta for a total of 536826 sequence 
-it represent 0.13859239306590962 % of the sequence 
-604 sunY mutan have been found in the file L447T09.R1_pre-treated_MutagenesisSequences.fasta for a total of 281414 sequence 
-it represent 0.21463040218326024 % of the sequence 
+384 sunY mutan have been found in the file L447T06.R1_pre-treated_MutagenesisSequences.fasta
+it represent 86.49 % of the mutan 
+384 sunY mutan have been found in the file L447T07.R1_pre-treated_MutagenesisSequences.fasta
+it represent 86.49 % of the mutan 
+383 sunY mutan have been found in the file L447T08.R1_pre-treated_MutagenesisSequences.fasta
+it represent 86.26 % of the mutan 
+384 sunY mutan have been found in the file L447T09.R1_pre-treated_MutagenesisSequences.fasta
+it represent 86.49 % of the mutan 
