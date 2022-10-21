@@ -1,5 +1,4 @@
 from collections import Counter
-from fileinput import filelineno
 from statistics import mean
 from settings import *
 import re, time, sys, os, platform, subprocess
@@ -296,7 +295,8 @@ def checkSeqLength(fastaFile):
     print(min(lengthList))
     print(max(lengthList))
 
-def generateSunyMutant():
+def generateSingleSunyMutant(destinationPath = "fasta/SunyMutan/"):
+    if not os.path.isdir(destinationPath) : os.mkdir(destinationPath)
     base= ["A", "T", "C", "G"]
     baseSeq = settings["refSeqSequence"]
     mutantList = []
@@ -307,36 +307,71 @@ def generateSunyMutant():
                 mutedSeq = baseSeq[0:i] + nuc + baseSeq[i+1:]
                 mutantList.append(SeqRecord(Seq(mutedSeq), id= seqName, name="", description=""))
 
-    SeqIO.write(mutantList, "fasta/sunyMutan.fasta", "fasta-2line")
+    SeqIO.write(mutantList, destinationPath+ "singleSunyMutan.fasta", "fasta-2line")
+    return mutantList
 
-def checkMutanPresence(fileList, mutanFasta, fileSourcePath = "fasta/treated/MutagenesisData/"):
-    mutanList = {}
-    for record in SeqIO.parse(mutanFasta, "fasta-2line"):
-        mutanList [record.id] = str(record.seq)
+def generateDoubleSunyMutant(destinationPath = "fasta/SunyMutan/"):
+    if not os.path.isdir(destinationPath) : os.mkdir(destinationPath)
+    base= ["A", "T", "C", "G"]
+    if not os.path.isfile(destinationPath+"singleSunyMutan.fasta"): singleMutationSeq = generateSingleSunyMutant()
+    else: singleMutationSeq = SeqIO.parse(destinationPath+"singleSunyMutan.fasta", "fasta-2line") 
+    mutantList = []
+    mutanCheckList= []
+    for record in singleMutationSeq:
+        baseSeq = str(record.seq)
+        imutableBase = int(re.findall(r'\d+', record.id)[0]) -1
+        for i in range(len(baseSeq)):
+            if i == imutableBase: continue
+            for nuc in base:
+                if nuc != baseSeq[i]:
+                    pos = "(" + str(imutableBase +1) + "&" + str(i+1)+")"
+                    if imutableBase> i : pos = "(" + str(i+1) + "&" + str(imutableBase +1)+")"
+                    seqName = "sunY_mutant_pos_" + pos + "_" + baseSeq[i] + "_to_" + nuc
+                    if imutableBase < i: mutedSeq = baseSeq[0:imutableBase] + baseSeq[imutableBase:i] + nuc + baseSeq[i+1:]
+                    else : mutedSeq = baseSeq[0:i] + nuc + baseSeq[i+1:]
+                    if mutedSeq not in mutanCheckList:
+                        mutantList.append(SeqRecord(Seq(mutedSeq), id= seqName, name="", description=""))
+                        mutanCheckList.append(mutedSeq)
 
+    SeqIO.write(mutantList, destinationPath+ "doubleSunyMutan.fasta", "fasta-2line")
+    return mutantList
+
+
+def checkMutanPresence(fileList, mutanFastaPath="fasta/SunyMutan/", fileSourcePath = "fasta/treated/MutagenesisData/"):
+    singleMutanList = {}
+    doubleMutanList = {}
+    for record in SeqIO.parse(mutanFastaPath+ "singleSunyMutan.fasta", "fasta-2line"):
+        singleMutanList[record.id] = str(record.seq)
+    for record in SeqIO.parse(mutanFastaPath+ "doubleSunyMutan.fasta", "fasta-2line"):
+        doubleMutanList[record.id] = str(record.seq)
     fileInfos = {}
     for file in fileList:
         print("starting check for ", file)
         # fileInfos[file] = {"nbMutanFound":0}
-        fileInfos[file] = {"nbMutanFound":0, "nbSeqInFile":0}
+        fileInfos[file] = {"nbSingleMutanFound":0, "nbDoubleMutanFound":0, "nbSeqInFile":0}
         listSeq = []
         for record in SeqIO.parse(fileSourcePath  + file, "fasta-2line"):
             listSeq.append(str(record.seq))
 
         fileInfos[file]["nbSeqInFile"] = len(listSeq)
-        # nbMutantFound = 0
-        for seq in mutanList.values():
-            if seq in listSeq : fileInfos[file]["nbMutanFound"]+=1
-            # fileInfos[file]["nbMutanFound"] += sum(seq in s for s in listSeq) 
+        print("check for single mutan presence")
+        for seq in singleMutanList.values():
+            if seq in listSeq : fileInfos[file]["nbSingleMutanFound"]+=1
+        print("check for double mutan presence")
+        for seq in doubleMutanList.values():
+            if seq in listSeq : fileInfos[file]["nbDoubleMutanFound"]+=1
                 
 
             log = "Suny mutan count \n"
             for fileName, d in fileInfos.items():
-                log += str(d["nbMutanFound"]) + " sunY mutan have been found in the file " + fileName + "\n"
-                log += "it represent " + str(round(d["nbMutanFound"]/ len(mutanList) *100, 2)) + " % of the mutan \n"
+                log += "in the file : " + fileName + "\n"
+                log += str(d["nbSingleMutanFound"]) + " sunY mutan with one mutation have been found \n"
+                log += "it represent " + str(round(d["nbSingleMutanFound"]/ len(singleMutanList) *100, 2)) + " % of the one mutation mutan \n"
+                log += str(d["nbDoubleMutanFound"]) + " sunY mutan with two mutation have been found \n"
+                log += "it represent " + str(round(d["nbDoubleMutanFound"]/ len(doubleMutanList) *100, 2)) + " % of the double mutation mutan \n"
 
             with open("results/sunYMutanSearch.txt", "w") as logFile: logFile.write(log)
 
 # checkSeqLength("fasta/treated/MutagenesisData/L447T06.R1_pre-treated_MutagenesisSequences.fasta")
 
-generateSunyMutant()
+# generateDoubleSunyMutant()
