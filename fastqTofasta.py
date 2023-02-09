@@ -18,7 +18,7 @@ def fastqToFasta(fastqFile, sourceFolder = "raw_data/", destinationFolder = "fas
 def convertAll(path = "raw_data/"):
     sourceFolder = str(input("please enter the path to the source folder containing the fastQ files"))
     destinationFolder = str(input("please enter the path where to store the converted fasta"))
-    fileList = [file for file in os.listdir(path) if file.endswith(".fastq.gz")]
+    fileList = [file for file in os.listdir(sourceFolder) if file.endswith(".fastq.gz")]
     for file in fileList:
         fastqToFasta(file, sourceFolder=sourceFolder, destinationFolder=destinationFolder)
 
