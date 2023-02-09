@@ -9,7 +9,7 @@ def fastqToFasta(fastqFile, sourceFolder = "raw_data/", destinationFolder = "fas
     if not os.path.isdir(destinationFolder) : os.makedirs(destinationFolder)
 
     fastaFile = destinationFolder+ fastqFile.replace(".fastq.gz", ".fasta")
-    if os.pathth.isfile(fastaFile) : return 
+    if os.path.isfile(fastaFile) : return 
     with gzip.open(sourceFolder + fastqFile, "rt") as fastq:
         SeqIO.convert(fastq, "fastq", fastaFile, "fasta")
     # os.remove(fastqFile)
