@@ -51,7 +51,7 @@ def preTreatDirectedEvolutionData(fastaFile, sourceFolder = settings["pretreatme
         seq = str(record.seq)
         if settings["pretreatment"]["pre_treatment_start_1"] in seq: 
             haveBeginningMotif=True
-            seq = seq[seq.find(settings["pretreatment"]["pre_treatment_start_1"]) -5:]
+            seq = seq[seq.find(settings["pretreatment"]["pre_treatment_start_2"]) -4:]
 
         if settings["pretreatment"]["pre_treatment_end_1"] in seq : 
             haveEndMotif=True
