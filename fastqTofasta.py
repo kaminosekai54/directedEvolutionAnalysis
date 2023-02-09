@@ -1,5 +1,5 @@
 import gzip
-import re, os, time
+import re, os, time, sys
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -16,10 +16,16 @@ def fastqToFasta(fastqFile, sourceFolder = "raw_data/", destinationFolder = "fas
     print("convertion finish for ", fastqFile)
 
 def convertAll(path = "raw_data/"):
-    sourceFolder = str(input("please enter the path to the source folder containing the fastQ files"))
-    destinationFolder = str(input("please enter the path where to store the converted fasta"))
+    print(sys.argv)
+    if len(sys.argv) > 1 :
+        sourceFolder = str(sys.argv[1])
+        destinationFolder = str(sys.argv[2])
+    else: 
+        sourceFolder = str(input("please enter the path to the source folder containing the fastQ files"))
+        destinationFolder = str(input("please enter the path where to store the converted fasta"))
     fileList = [file for file in os.listdir(sourceFolder) if file.endswith(".fastq.gz")]
     for file in fileList:
         fastqToFasta(file, sourceFolder=sourceFolder, destinationFolder=destinationFolder)
 
-convertAll()
+if __name__ == '__main__':
+    convertAll()
