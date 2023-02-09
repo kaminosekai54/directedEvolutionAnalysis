@@ -6,20 +6,19 @@ settings = {
     "sourceFolder":"fasta/raw_fasta/", 
     "destinationFolder":"fasta/pre-treated/", 
 "pre_treatment_start_1":"TAAAATCTGCCTAAACGG", # SunY beginning from nucleotide 5
-"pre_treatment_start_2":"GTGGTAAAAT", # SunY beginning from nucleotide 9
-# "pre_treatment_start_2":"TCTGCCTAAACGG", # SunY beginning from nucleotide 9
-"pre_treatment_end_1":"AACTTCAAATATCTTCGGAACTCA", # Sub2
-# "pre_treatment_end_2":"TCCCTATCTCTCTAT", # exon_OT
-"pre_treatment_end_2":"CAGATATCGG", # exon_OT
-"length_threshold" : 100,
-"preTreatFile" : False,
+"pre_treatment_start_2":"GTGGTAAAAT", # SunY beginning
+"pre_treatment_end_1":"CAAATATCTTCG", # Sub2
+"pre_treatment_end_3":"TCCCTATCTCTCTAT", # exon_OT
+"pre_treatment_end_2":"CAGATATCGG", # SunY end
+"length_threshold" : 135,
+"preTreatFile" : True,
 "plotSeqLengthDistribution" : True,
     },
 
 "seqOccurenceCounting" : { # this part concerned only the counting and the writting of the output file for Directed Evolution data
 "countMutation_seq_start": "TAAAATCTGCCTAAACGG", # SunY beginning from nucleotide 5
 "countMutation_seq_end": "CAGATATCGG", # SunY end
-"countMutation_seq_Substrate": "CAGATATCGGAACTTCAAATATCTTCGGAACTCA", # SunY end with Sub2
+"countMutation_seq_Substrate": "CAGATATCGGAACTTCAAATATCTTCGG", # SunY end with Sub2
 "countMutation_length" : 142,
 "minimumOccurence" : 10,
 },

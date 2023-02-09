@@ -24,8 +24,8 @@ def main():
 
     # Directed Evolution
 
-    if not os.path.isdir("fasta/treated/") : os.mkdir("fasta/treated/")
-    if not os.path.isdir("fasta/treated/DirectedEvolutionData/") : os.mkdir("fasta/treated/DirectedEvolutionData/")
+    #if not os.path.isdir("fasta/treated/") : os.mkdir("fasta/treated/")
+    #if not os.path.isdir("fasta/treated/DirectedEvolutionData/") : os.mkdir("fasta/treated/DirectedEvolutionData/")
 
     # fileList = [file for file in os.listdir("fasta/pre-treated/DirectedEvolutionData/") if "R1" in file]
     
@@ -38,7 +38,7 @@ def main():
 
     # Mutagenesis
 
-    if not os.path.isdir("fasta/treated/MutagenesisData/") : os.mkdir("fasta/treated/MutagenesisData/")
+    #if not os.path.isdir("fasta/treated/MutagenesisData/") : os.mkdir("fasta/treated/MutagenesisData/")
 
     # fileList = [file for file in os.listdir("fasta/pre-treated/MutagenesisData/") if "R1" in file and file.endswith(".fasta")]
     
@@ -47,13 +47,13 @@ def main():
         # writeSeqMutagenesisFasta(sortedMutantSeqDict, file)
 
     # alignedFile = align("L447T06.R1_pre-treated_MutagenesisSequences.fasta", 10000000, sourcePath =  "fasta/treated/MutagenesisData/", destinationPath = "fasta/alignment/MutagenesisData/")
-    if not os.path.isdir("fasta/alignment/") : os.mkdir("fasta/alignment/")
-    fileList = [file for file in os.listdir("fasta/treated/MutagenesisData/") if file.endswith(".fasta")]
-    checkMutanPresence(fileList , "fasta/sunyMutan.fasta")
+    #if not os.path.isdir("fasta/alignment/") : os.mkdir("fasta/alignment/")
+    #fileList = [file for file in os.listdir("fasta/treated/MutagenesisData/") if file.endswith(".fasta")]
+    #checkMutanPresence(fileList , "fasta/sunyMutan.fasta")
     # for file in fileList: 
         # alignedFile = align(file, 10000, sourcePath =  "fasta/treated/MutagenesisData/", destinationPath = "fasta/alignment/MutagenesisData/")
 
-    if not os.path.isdir("figures/MutagenesisData/") : os.mkdir("figures/MutagenesisData/")
+    #if not os.path.isdir("figures/MutagenesisData/") : os.mkdir("figures/MutagenesisData/")
     # fileList = [file for file in os.listdir("fasta/alignment/MutagenesisData") ]
     # for file in fileList:
         # if file.endswith("log.txt") : os.remove("fasta/alignment/MutagenesisData/"+ file)
