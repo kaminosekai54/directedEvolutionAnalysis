@@ -41,7 +41,7 @@ def preTreatDirectedEvolutionData(fastaFile, sourceFolder = settings["pretreatme
     BothMotif = 0
     
     file_number = fastaFile[fastaFile.find("T0"):fastaFile.find("T0")+3]
-    print(file_number)
+    # print(file_number)
     baseLengthFile = len(list(SeqIO.parse(sourceFolder+ fastaFile, "fasta")))
 
     for record in SeqIO.parse(sourceFolder+ fastaFile, "fasta"):

@@ -24,8 +24,8 @@ def get_seq(arg):
     nrjs, alig_scr = [], []
 
     # for alig in aligs:
-    al_pos = "".join([cs for az, cs in zip(alig[0], alig[1]) if az != "-"])
-    nseq = al_pos + ref_seq
+    al_pos = "".join([cs for az, cs in zip(alig[0], alig[1]) ])
+    nseq = al_pos 
     return name, nseq, alig[-1]
 
 
@@ -47,10 +47,17 @@ if __name__ == '__main__':
     if not os.path.isdir("alignedFile/"): os.mkdir("alignedFile/")
 
     alnRecord = []
+    alnRecord_deleted = []
     for name, seq, ali_scr in scores:
-        alnRecord .append(SeqRecord(Seq(seq), id = name, name="", description=""))
-        # nb_mut = sum(1 for s, az in zip(seq, ref_seq) if s != az and s != "-")
+        if len(seq) <= 184:
+            alnRecord .append(SeqRecord(Seq(seq), id = name, name="", description=""))
+            # nb_mut = sum(1 for s, az in zip(seq, ref_seq) if s != az and s != "-")
+        else: 
+            alnRecord_deleted.append(SeqRecord(Seq(seq), id = name, name="", description=""))
         # print(f">{name} SCORE={ali_scr} NB_MUT={nb_mut}\n{seq}")
 
         
     SeqIO.write(alnRecord, "alignedFile/"+ infile .replace(".fasta", "_aligned.fasta"), "fasta-2line")
+    SeqIO.write(alnRecord, "alignedFile/"+ infile .replace(".fasta", "_aligned_deleted.fasta"), "fasta-2line")
+    os.remove(infile)
+    print("finish")

@@ -20,7 +20,7 @@ def main():
         for file in fileList:
             seqLengthList = preTreatmentFasta(file)
         
-    print("switching to sequence occurence count function")
+    # print("switching to sequence occurence count function")
 
     # Directed Evolution
 
